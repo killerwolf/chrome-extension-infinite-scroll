@@ -73,65 +73,31 @@ pie title Feature Implementation Status
 - `Alt + ↓`: Start scrolling down
 - `Alt + P`: Pause scrolling
 
-## 🏗️ Architecture Overview
+### Use Cases
 
-```mermaid
-graph TB
-    A[Popup UI] --> B[Content Script]
-    A --> C[Background Script]
-    B --> D[DOM Manipulation]
-    B --> E[Event Listeners]
-    E --> F[Auto-Pause Logic]
-    D --> G[Smooth Scrolling]
-    D --> H[Ultra-Fast Scrolling]
-    
-    subgraph "Speed Handling"
-        G --> I[RequestAnimationFrame<br/>≤8000 px/s]
-        H --> J[High-Frequency Intervals<br/>>8000 px/s]
-    end
-    
-    subgraph "User Interaction"
-        E --> K[Wheel Events]
-        E --> L[Touch Events]
-        E --> M[Keyboard Events]
-        E --> N[Mouse Events]
-    end
-```
+#### 📖 Reading Long Articles
+Perfect for news articles, blog posts, and documentation. Use **Slow** or **Moderate** speed for comfortable reading pace.
 
-## 📁 Project Structure
+#### 📱 Social Media Browsing
+Great for scrolling through feeds on Twitter, Reddit, or Instagram. Use **Fast** or **Very Fast** speed for quick content scanning.
 
-```mermaid
-graph TD
-    A[chrome-extension-infinite-scroll/] --> B[entrypoints/]
-    A --> C[components/]
-    A --> D[docs/]
-    A --> E[public/]
-    A --> F[lib/]
-    
-    B --> B1[popup/]
-    B --> B2[content.ts]
-    B --> B3[background.ts]
-    
-    B1 --> B11[App.tsx]
-    B1 --> B12[main.tsx]
-    B1 --> B13[index.css]
-    
-    C --> C1[ui/]
-    C1 --> C11[button.tsx]
-    C1 --> C12[label.tsx]
-    C1 --> C13[slider.tsx]
-    
-    D --> D1[📋 features.md]
-    D --> D2[🗺️ development_plan.md]
-    D --> D3[⚙️ technical_plan.md]
-    D --> D4[📝 tasks.md]
-    
-    E --> E1[icon/]
-    E1 --> E11[16.png]
-    E1 --> E12[32.png]
-    E1 --> E13[48.png]
-    E1 --> E14[128.png]
-```
+#### 🎬 Teleprompter Mode
+Ideal for presentations and video recording. Use **Very Slow** speed for consistent, predictable scrolling.
+
+#### 📚 Code Review
+Excellent for examining code line by line. Use **Very Slow** speed for careful inspection.
+
+## 🆚 Comparison with Existing Solutions
+
+| Feature | Simple Autoscroll | Other Extensions | SuperScroll |
+|---------|------------------|------------------|-------------|
+| Scrolling Quality | ❌ Laggy, jerky | ❌ Inconsistent | ✅ Smooth 60fps |
+| Speed Control | ❌ Unclear values | ❌ Limited options | ✅ 8 named presets |
+| User Interaction | ❌ Manual stop | ❌ No intelligence | ✅ Auto-pause/resume |
+| Keyboard Support | ❌ None | ❌ Limited | ✅ 4 shortcuts |
+| UI Design | ❌ Basic | ❌ Outdated | ✅ Modern, intuitive |
+| Performance | ❌ High CPU | ❌ Resource heavy | ✅ Optimized |
+| Max Speed | ❌ ~500 px/s | ❌ ~1000 px/s | ✅ 10,000 px/s |
 
 ## 🚀 Development
 
@@ -170,17 +136,6 @@ flowchart LR
     F --> G[Commit & Push]
 ```
 
-## 📚 Documentation
-
-| Document | Purpose | Status |
-|----------|---------|--------|
-| [📋 Features](docs/features.md) | Detailed feature overview and comparisons | ✅ Complete |
-| [🗺️ Development Plan](docs/development_plan.md) | Phased development roadmap | ✅ Complete |
-| [⚙️ Technical Plan](docs/technical_plan.md) | Technical architecture and setup | ✅ Complete |
-| [📝 Tasks](docs/tasks.md) | Actionable improvement tasks | ✅ Complete |
-| [📊 User Reviews](docs/user_reviews.md) | Analysis of existing solutions | ✅ Complete |
-| [📋 PRD](docs/prd.md) | Product Requirements Document | ✅ Complete |
-
 ## 🎯 Roadmap
 
 ### 🏁 Phase 1: MVP (Current - v0.1.0)
@@ -204,17 +159,19 @@ flowchart LR
 - 🔗 Developer API
 - ☁️ Settings synchronization
 
-## 🆚 Comparison with Existing Solutions
+## 📚 Documentation
 
-| Feature | Simple Autoscroll | Other Extensions | SuperScroll |
-|---------|------------------|------------------|-------------|
-| Scrolling Quality | ❌ Laggy, jerky | ❌ Inconsistent | ✅ Smooth 60fps |
-| Speed Control | ❌ Unclear values | ❌ Limited options | ✅ 8 named presets |
-| User Interaction | ❌ Manual stop | ❌ No intelligence | ✅ Auto-pause/resume |
-| Keyboard Support | ❌ None | ❌ Limited | ✅ 4 shortcuts |
-| UI Design | ❌ Basic | ❌ Outdated | ✅ Modern, intuitive |
-| Performance | ❌ High CPU | ❌ Resource heavy | ✅ Optimized |
-| Max Speed | ❌ ~500 px/s | ❌ ~1000 px/s | ✅ 10,000 px/s |
+| Document | Purpose |
+|----------|---------|
+| [📋 BACKLOG](docs/BACKLOG.md) | Feature backlog and future enhancements |
+| [🏗️ ARCHITECTURE](docs/ARCHITECTURE.md) | Technical architecture and implementation details |
+| [🤝 CONTRIBUTING](docs/CONTRIBUTING.md) | Contribution guidelines and development setup |
+
+## 🐛 Known Limitations
+
+- Cannot scroll within iframes due to browser security restrictions
+- Some websites with complex scroll hijacking may interfere with the extension
+- Keyboard shortcuts may conflict with website-specific shortcuts
 
 ## 🤝 Contributing
 

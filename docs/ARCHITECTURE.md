@@ -1,8 +1,10 @@
-# Technical Architecture & Implementation Plan
+# SuperScroll Technical Architecture
 
-## 🏗️ System Architecture
+## 🏗️ System Overview
 
-### High-Level Architecture
+SuperScroll is a modern Chrome extension built with cutting-edge web technologies, designed for performance, maintainability, and extensibility. This document provides comprehensive technical documentation for developers and contributors.
+
+## 📊 Architecture Overview
 
 ```mermaid
 graph TB
@@ -24,33 +26,6 @@ graph TB
         A --> J[Chrome Tabs API]
         C --> K[Chrome Runtime API]
     end
-```
-
-### Component Architecture
-
-```mermaid
-graph TD
-    A[SuperScroll Extension] --> B[UI Layer]
-    A --> C[Logic Layer]
-    A --> D[Data Layer]
-    
-    B --> B1[Popup Component]
-    B --> B2[Speed Selector]
-    B --> B3[Control Buttons]
-    B --> B4[Status Display]
-    
-    C --> C1[Scroll Engine]
-    C --> C2[Event Manager]
-    C --> C3[Speed Controller]
-    C --> C4[State Manager]
-    
-    D --> D1[Chrome Storage]
-    D --> D2[Message Passing]
-    D --> D3[Configuration]
-    
-    C1 --> E1[RequestAnimationFrame]
-    C1 --> E2[Direct DOM Access]
-    C1 --> E3[High-Speed Intervals]
 ```
 
 ## 🔧 Technical Stack
@@ -90,6 +65,40 @@ graph TD
 }
 ```
 
+## 📁 Project Structure
+
+```mermaid
+graph TD
+    A[chrome-extension-infinite-scroll/] --> B[entrypoints/]
+    A --> C[components/]
+    A --> D[docs/]
+    A --> E[public/]
+    A --> F[lib/]
+    
+    B --> B1[popup/]
+    B --> B2[content.ts]
+    B --> B3[background.ts]
+    
+    B1 --> B11[App.tsx]
+    B1 --> B12[main.tsx]
+    B1 --> B13[index.css]
+    
+    C --> C1[ui/]
+    C1 --> C11[button.tsx]
+    C1 --> C12[label.tsx]
+    C1 --> C13[slider.tsx]
+    
+    D --> D1[📋 BACKLOG.md]
+    D --> D2[🏗️ ARCHITECTURE.md]
+    D --> D3[🤝 CONTRIBUTING.md]
+    
+    E --> E1[icon/]
+    E1 --> E11[16.png]
+    E1 --> E12[32.png]
+    E1 --> E13[48.png]
+    E1 --> E14[128.png]
+```
+
 ## ⚡ Scroll Engine Implementation
 
 ### Speed Management System
@@ -112,6 +121,21 @@ flowchart TD
     H --> K
     I --> K
     J --> L[High-Speed Timer]
+```
+
+### Speed Presets Configuration
+
+```typescript
+const SPEED_PRESETS = [
+  { name: 'Very Slow', pixelsPerSecond: 50 },
+  { name: 'Slow', pixelsPerSecond: 150 },
+  { name: 'Moderate', pixelsPerSecond: 300 },
+  { name: 'Fast', pixelsPerSecond: 600 },
+  { name: 'Very Fast', pixelsPerSecond: 1200 },
+  { name: 'Ultra Fast', pixelsPerSecond: 2500 },
+  { name: 'Ludicrous', pixelsPerSecond: 5000 },
+  { name: 'Insane', pixelsPerSecond: 10000 }
+];
 ```
 
 ### Performance Optimization Strategy
@@ -472,7 +496,7 @@ describe('ScrollEngine', () => {
 });
 ```
 
-## 🚀 Deployment Pipeline
+## 🚀 Build & Deployment
 
 ### Build Process
 
@@ -497,26 +521,28 @@ flowchart LR
     J --> B
 ```
 
-### Release Strategy
+### Development Commands
 
-```mermaid
-gitgraph
-    commit id: "v0.1.0 MVP"
-    branch feature/dynamic-content
-    commit id: "Dynamic content handling"
-    commit id: "YouTube compatibility"
-    checkout main
-    merge feature/dynamic-content
-    commit id: "v0.2.0 Enhanced"
-    branch feature/ai-adaptation
-    commit id: "AI speed adaptation"
-    commit id: "Smart presets"
-    checkout main
-    merge feature/ai-adaptation
-    commit id: "v0.3.0 Advanced"
+```bash
+# Development
+npm run dev              # Start development server
+npm run dev:firefox      # Firefox development
+
+# Building
+npm run build            # Production build
+npm run build:firefox    # Firefox build
+
+# Quality
+npm run lint             # Lint code
+npm run format           # Format code
+npm run compile          # Type check
+
+# Packaging
+npm run zip              # Create Chrome package
+npm run zip:firefox      # Create Firefox package
 ```
 
-## 📈 Future Architecture Considerations
+## 🔮 Future Architecture Considerations
 
 ### Scalability Planning
 
@@ -555,4 +581,29 @@ timeline
                       : Cloud Integration
 ```
 
-This technical architecture provides a solid foundation for the SuperScroll extension while maintaining flexibility for future enhancements and optimizations.
+## 📚 Development Guidelines
+
+### Code Style
+- Follow SOLID/KISS principles
+- Use TypeScript for type safety
+- Implement comprehensive error handling
+- Write self-documenting code
+- Follow established patterns
+
+### Performance
+- Minimize DOM manipulations
+- Use efficient event handling
+- Implement proper cleanup
+- Monitor resource usage
+- Optimize for different devices
+
+### Security
+- Validate all inputs
+- Use minimal permissions
+- Implement CSP properly
+- Audit dependencies regularly
+- Follow security best practices
+
+---
+
+This architecture document serves as the technical foundation for SuperScroll development and maintenance. It should be updated as the system evolves and new patterns emerge. 
