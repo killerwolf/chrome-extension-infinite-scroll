@@ -3,13 +3,12 @@ import { defineConfig } from "wxt";
 // See https://wxt.dev/api/config.html
 export default defineConfig({
   webExt: {
-    chromiumArgs: ['--user-data-dir=./.wxt/chrome-data'],
+    chromiumArgs: ["--user-data-dir=./.wxt/chrome-data"],
     binaries: {
-      chrome: '/Users/hlaadhar/.local/bin/chrome/mac_arm-136.0.7103.113/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing', // Use Chrome Beta instead of regular Chrome
+      chrome:
+        "/Users/hlaadhar/.local/bin/chrome/mac_arm-136.0.7103.113/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing", // Use Chrome Beta instead of regular Chrome
     },
-    startUrls: [
-      "https://www.voici.fr/",
-    ],
+    startUrls: ["https://www.voici.fr/"],
   },
   manifest: {
     name: "SuperScroll",

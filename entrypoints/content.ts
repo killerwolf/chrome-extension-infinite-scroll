@@ -4,7 +4,7 @@ export default defineContentScript({
     console.log("SuperScroll content script loaded!");
 
     let isScrolling = false;
-    let scrollDirection: 'up' | 'down' = 'down';
+    let scrollDirection: "up" | "down" = "down";
     let scrollSpeed = 2; // Speed preset index (0-7)
     let animationId: number | undefined;
     let lastTimestamp = 0;
@@ -12,14 +12,14 @@ export default defineContentScript({
 
     // Enhanced speed presets: much faster options for power users
     const SPEED_PRESETS = [
-      { name: 'Very Slow', pixelsPerSecond: 50 },
-      { name: 'Slow', pixelsPerSecond: 150 },
-      { name: 'Moderate', pixelsPerSecond: 300 },
-      { name: 'Fast', pixelsPerSecond: 600 },
-      { name: 'Very Fast', pixelsPerSecond: 1200 },
-      { name: 'Ultra Fast', pixelsPerSecond: 2500 },
-      { name: 'Ludicrous', pixelsPerSecond: 5000 },
-      { name: 'Insane', pixelsPerSecond: 10000 }
+      { name: "Very Slow", pixelsPerSecond: 50 },
+      { name: "Slow", pixelsPerSecond: 150 },
+      { name: "Moderate", pixelsPerSecond: 300 },
+      { name: "Fast", pixelsPerSecond: 600 },
+      { name: "Very Fast", pixelsPerSecond: 1200 },
+      { name: "Ultra Fast", pixelsPerSecond: 2500 },
+      { name: "Ludicrous", pixelsPerSecond: 5000 },
+      { name: "Insane", pixelsPerSecond: 10000 },
     ];
 
     // Ultra-fast scrolling that bypasses browser limitations
@@ -32,19 +32,20 @@ export default defineContentScript({
 
       const deltaTime = timestamp - lastTimestamp;
       const currentSpeed = SPEED_PRESETS[scrollSpeed];
-      
+
       // Calculate pixels to scroll based on time elapsed
       let pixelsToScroll = (currentSpeed.pixelsPerSecond * deltaTime) / 1000;
-      
+
       // For ultra-high speeds, use direct DOM manipulation to bypass browser throttling
       if (currentSpeed.pixelsPerSecond > 1500) {
         // Use multiple smaller scrolls per frame for ultra-fast speeds
         const scrollsPerFrame = Math.ceil(currentSpeed.pixelsPerSecond / 3000);
         const pixelsPerScroll = pixelsToScroll / scrollsPerFrame;
-        
+
         for (let i = 0; i < scrollsPerFrame; i++) {
-          const scrollAmount = scrollDirection === 'down' ? pixelsPerScroll : -pixelsPerScroll;
-          
+          const scrollAmount =
+            scrollDirection === "down" ? pixelsPerScroll : -pixelsPerScroll;
+
           // Direct DOM manipulation for maximum speed
           if (currentSpeed.pixelsPerSecond > 5000) {
             // Bypass smooth scrolling entirely for insane speeds
@@ -57,42 +58,44 @@ export default defineContentScript({
         }
       } else {
         // Normal scrolling for moderate speeds
-        const scrollAmount = scrollDirection === 'down' ? pixelsToScroll : -pixelsToScroll;
+        const scrollAmount =
+          scrollDirection === "down" ? pixelsToScroll : -pixelsToScroll;
         window.scrollBy({
           top: scrollAmount,
-          behavior: currentSpeed.pixelsPerSecond > 300 ? 'auto' : 'smooth'
+          behavior: currentSpeed.pixelsPerSecond > 300 ? "auto" : "smooth",
         });
       }
 
       lastTimestamp = timestamp;
-      
+
       if (isScrolling) {
         animationId = requestAnimationFrame(smoothScroll);
       }
     }
 
-    function startScrolling(direction: 'up' | 'down') {
+    function startScrolling(direction: "up" | "down") {
       if (isScrolling && scrollDirection === direction) return;
-      
+
       stopScrolling();
       isScrolling = true;
       scrollDirection = direction;
       lastTimestamp = 0;
-      
+
       const currentSpeed = SPEED_PRESETS[scrollSpeed];
-      
+
       // For insane speeds (>8000 px/s), use high-frequency interval instead of RAF
       if (currentSpeed.pixelsPerSecond > 8000) {
         const pixelsPerInterval = currentSpeed.pixelsPerSecond / 100; // 100 intervals per second
         highSpeedIntervalId = window.setInterval(() => {
           if (!isScrolling) return;
-          
-          const scrollAmount = scrollDirection === 'down' ? pixelsPerInterval : -pixelsPerInterval;
-          
+
+          const scrollAmount =
+            scrollDirection === "down" ? pixelsPerInterval : -pixelsPerInterval;
+
           // Direct DOM manipulation for maximum performance
           document.documentElement.scrollTop += scrollAmount;
           document.body.scrollTop += scrollAmount;
-          
+
           // Also trigger window scroll for compatibility
           window.scrollBy(0, scrollAmount);
         }, 10); // 10ms = 100fps
@@ -100,27 +103,29 @@ export default defineContentScript({
         // Use RAF for normal and fast speeds
         animationId = requestAnimationFrame(smoothScroll);
       }
-      
-      console.log(`Started scrolling ${direction} at ${SPEED_PRESETS[scrollSpeed].name} speed`);
+
+      console.log(
+        `Started scrolling ${direction} at ${SPEED_PRESETS[scrollSpeed].name} speed`,
+      );
     }
 
     function stopScrolling() {
       isScrolling = false;
-      
+
       // Clear RAF animation
       if (animationId) {
         cancelAnimationFrame(animationId);
         animationId = undefined;
       }
-      
+
       // Clear high-speed interval
       if (highSpeedIntervalId) {
         clearInterval(highSpeedIntervalId);
         highSpeedIntervalId = undefined;
       }
-      
+
       lastTimestamp = 0;
-      console.log('Scrolling stopped');
+      console.log("Scrolling stopped");
     }
 
     function setSpeed(newSpeed: number) {
@@ -134,38 +139,40 @@ export default defineContentScript({
     function handleUserInteraction() {
       if (isScrolling) {
         stopScrolling();
-        console.log('Auto-paused due to user interaction');
+        console.log("Auto-paused due to user interaction");
       }
     }
 
     // Add event listeners for auto-pause
-    ['wheel', 'touchstart', 'keydown', 'mousedown'].forEach(event => {
-      document.addEventListener(event, handleUserInteraction, { passive: true });
+    ["wheel", "touchstart", "keydown", "mousedown"].forEach((event) => {
+      document.addEventListener(event, handleUserInteraction, {
+        passive: true,
+      });
     });
 
     // Keyboard shortcuts
-    document.addEventListener('keydown', (e) => {
+    document.addEventListener("keydown", (e) => {
       if (e.altKey) {
         switch (e.key) {
-          case 's':
-          case 'S':
+          case "s":
+          case "S":
             e.preventDefault();
             if (isScrolling) {
               stopScrolling();
             } else {
-              startScrolling('down');
+              startScrolling("down");
             }
             break;
-          case 'ArrowUp':
+          case "ArrowUp":
             e.preventDefault();
-            startScrolling('up');
+            startScrolling("up");
             break;
-          case 'ArrowDown':
+          case "ArrowDown":
             e.preventDefault();
-            startScrolling('down');
+            startScrolling("down");
             break;
-          case 'p':
-          case 'P':
+          case "p":
+          case "P":
             e.preventDefault();
             stopScrolling();
             break;
@@ -176,58 +183,58 @@ export default defineContentScript({
     // Message handling for popup communication
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       switch (message.type) {
-        case 'START_SCROLL_UP':
-          startScrolling('up');
-          sendResponse({ 
-            status: 'scrolling_up', 
+        case "START_SCROLL_UP":
+          startScrolling("up");
+          sendResponse({
+            status: "scrolling_up",
             speed: SPEED_PRESETS[scrollSpeed].name,
-            direction: 'up'
+            direction: "up",
           });
           break;
 
-        case 'START_SCROLL_DOWN':
-          startScrolling('down');
-          sendResponse({ 
-            status: 'scrolling_down', 
+        case "START_SCROLL_DOWN":
+          startScrolling("down");
+          sendResponse({
+            status: "scrolling_down",
             speed: SPEED_PRESETS[scrollSpeed].name,
-            direction: 'down'
+            direction: "down",
           });
           break;
 
-        case 'STOP_SCROLL':
+        case "STOP_SCROLL":
           stopScrolling();
-          sendResponse({ 
-            status: 'stopped',
-            speed: SPEED_PRESETS[scrollSpeed].name
+          sendResponse({
+            status: "stopped",
+            speed: SPEED_PRESETS[scrollSpeed].name,
           });
           break;
 
-        case 'SET_SPEED':
+        case "SET_SPEED":
           setSpeed(message.speed);
-          sendResponse({ 
-            status: 'speed_updated', 
+          sendResponse({
+            status: "speed_updated",
             speedName: SPEED_PRESETS[scrollSpeed].name,
-            speed: scrollSpeed
+            speed: scrollSpeed,
           });
           break;
 
-        case 'GET_STATUS':
+        case "GET_STATUS":
           sendResponse({
             isScrolling,
             direction: scrollDirection,
             speed: scrollSpeed,
-            speedName: SPEED_PRESETS[scrollSpeed].name
+            speedName: SPEED_PRESETS[scrollSpeed].name,
           });
           break;
 
         default:
-          sendResponse({ status: 'unknown_command' });
+          sendResponse({ status: "unknown_command" });
       }
       return true; // Keep message channel open for async response
     });
 
     // Cleanup on page unload
-    window.addEventListener('beforeunload', () => {
+    window.addEventListener("beforeunload", () => {
       stopScrolling();
     });
   },

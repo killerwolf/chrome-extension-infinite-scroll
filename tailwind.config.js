@@ -3,10 +3,10 @@
 module.exports = {
   darkMode: ["class"],
   content: [
-    './entrypoints/**/*.{ts,tsx,html,js,jsx}',
-    './components/**/*.{ts,tsx,html,js,jsx}',
-    './app/**/*.{ts,tsx,html,js,jsx}',
-    './src/**/*.{ts,tsx,html,js,jsx}',
+    "./entrypoints/**/*.{ts,tsx,html,js,jsx}",
+    "./components/**/*.{ts,tsx,html,js,jsx}",
+    "./app/**/*.{ts,tsx,html,js,jsx}",
+    "./src/**/*.{ts,tsx,html,js,jsx}",
   ],
   prefix: "",
   theme: {
@@ -75,4 +75,4 @@ module.exports = {
     },
   },
   plugins: [require("tailwindcss-animate")],
-}
+};
