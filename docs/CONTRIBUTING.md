@@ -1,5 +1,9 @@
 # Contributing to SuperScroll
 
+## Project Structure
+
+See [ARCHITECTURE.md](./ARCHITECTURE.md) for a full breakdown of the project structure, key files, and technical details.
+
 Thank you for your interest in contributing to SuperScroll! This guide will help you get started with contributing to our advanced auto-scroll Chrome extension.
 
 ## 🚀 Quick Start

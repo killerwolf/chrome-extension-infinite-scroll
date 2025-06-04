@@ -67,37 +67,33 @@ graph TB
 
 ## 📁 Project Structure
 
-```mermaid
-graph TD
-    A[chrome-extension-infinite-scroll/] --> B[entrypoints/]
-    A --> C[components/]
-    A --> D[docs/]
-    A --> E[public/]
-    A --> F[lib/]
-    
-    B --> B1[popup/]
-    B --> B2[content.ts]
-    B --> B3[background.ts]
-    
-    B1 --> B11[App.tsx]
-    B1 --> B12[main.tsx]
-    B1 --> B13[index.css]
-    
-    C --> C1[ui/]
-    C1 --> C11[button.tsx]
-    C1 --> C12[label.tsx]
-    C1 --> C13[slider.tsx]
-    
-    D --> D1[📋 BACKLOG.md]
-    D --> D2[🏗️ ARCHITECTURE.md]
-    D --> D3[🤝 CONTRIBUTING.md]
-    
-    E --> E1[icon/]
-    E1 --> E11[16.png]
-    E1 --> E12[32.png]
-    E1 --> E13[48.png]
-    E1 --> E14[128.png]
 ```
+chrome-extension-infinite-scroll/
+├── entrypoints/
+│   └── popup/           # Popup UI entrypoint (App.tsx)
+│   └── content.ts       # Content script for scrolling logic
+├── components/
+│   └── ui/              # Reusable UI components (Button, Label, etc.)
+├── public/              # Static assets (icons, images)
+├── docs/                # Documentation and design notes
+├── .output/             # Build output for Chrome (unpacked extension)
+├── package.json         # Project metadata and scripts
+├── README.md            # Main project documentation
+├── tsconfig.json        # TypeScript configuration
+└── wxt.config.ts        # WXT (extension build tool) config
+```
+
+Key Files & Folders:
+- entrypoints/popup/App.tsx — Main React component for the popup UI
+- entrypoints/content.ts — Content script injected into web pages for scrolling
+- components/ui/ — Shared UI components (Button, Label, etc.)
+- public/ — Static files (icons, images)
+- docs/ — Documentation, design notes, and structure
+- .output/ — Output directory for built extension (load this in Chrome)
+- package.json — Project dependencies and scripts
+- README.md — Project overview and development guide
+- tsconfig.json — TypeScript settings
+- wxt.config.ts — WXT build tool configuration
 
 ## ⚡ Scroll Engine Implementation
 
@@ -603,6 +599,61 @@ timeline
 - Implement CSP properly
 - Audit dependencies regularly
 - Follow security best practices
+
+## UX & UI Design Principles
+
+- Material Design: Cards, elevation, color accents, and floating action buttons
+- Negative Space: Generous padding and margin for clarity and focus
+- Section Separation: Each major function (speed, status, controls, shortcuts) is visually distinct
+- Typography: Large, bold headers; clear section titles; readable body text
+- Color Palette: Blue primary, green accent, red for pause, with high contrast
+- Light/Dark Mode: Fully supported, with appropriate backgrounds and text colors
+
+Accessibility:
+- Large touch targets (min 48x48px)
+- Keyboard navigation and visible focus rings
+- High color contrast for readability
+- Screen reader friendly (semantic HTML, ARIA labels)
+
+UI Layout:
+- Header: Brand, icon, and description
+- Speed Control: Dropdown, current speed chip
+- Status: Animated icon, status chip (Ready, Scrolling Up/Down)
+- Controls: FAB-style buttons for Up, Pause, Down
+- Shortcuts: Keyboard shortcut panel
+- Footer: Version and auto-pause info
+
+Responsive & Modern:
+- 400px width for comfortable use
+- Cards with 24px+ border-radius and strong shadow
+- Spacing: 24–32px between major sections, 16px+ inside cards
+- Center-aligned headers and status for visual hierarchy
+
+Visual Feedback:
+- Active/hover states: Color and shadow changes
+- Status chips: Color-coded for current state
+- Animated icons: Bouncing arrows when scrolling
+
+Light/Dark Mode Example:
+- Light: #f5f5f5 background, white cards, blue/green accents
+- Dark: #212121 background, #23272f cards, blue/green accents
+
+## Accessibility
+
+- Large touch targets: All buttons and controls are at least 48x48px.
+- Keyboard navigation: All controls are tabbable and have visible focus rings.
+- Screen reader support: Semantic HTML, ARIA labels, and status updates.
+- High color contrast: Meets or exceeds WCAG AA standards for text and controls.
+- Light/Dark mode: Both themes maintain accessibility and contrast.
+- Auto-pause on interaction: Prevents unexpected scrolling for users with motor disabilities.
+- Clear status feedback: Animated icons and color-coded chips for current state.
+
+Best Practices Followed:
+- Uses Material Design guidelines for spacing, color, and touch targets.
+- All interactive elements have accessible names and roles.
+- No color is used as the only means of conveying information.
+- Supports zoom and high-DPI screens.
+- Designed for use with screen readers and keyboard only.
 
 ---
 
