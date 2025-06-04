@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import type React from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "~/components/ui/button";
 import { Label } from "~/components/ui/label";
 import { ChevronUp, ChevronDown, Pause } from "lucide-react";
@@ -14,6 +15,20 @@ const SPEED_PRESETS = [
   { name: "Insane", value: 7, description: "10000 px/s" },
 ];
 
+// Define proper types for message communication
+interface ScrollMessage {
+  type: string;
+  speed?: number;
+}
+
+interface ScrollResponse {
+  status?: string;
+  speed?: number;
+  isScrolling?: boolean;
+  direction?: "up" | "down";
+  speedName?: string;
+}
+
 function App() {
   const [speed, setSpeed] = useState(2); // Default to Moderate
   const [isScrolling, setIsScrolling] = useState(false);
@@ -22,35 +37,35 @@ function App() {
   );
   const [currentSpeedName, setCurrentSpeedName] = useState("Moderate");
 
-  const sendMessageToContentScript = (
-    message: any,
-    callback?: (response: any) => void,
-  ) => {
-    chrome.tabs.query(
-      { active: true, currentWindow: true },
-      (tabs: chrome.tabs.Tab[]) => {
-        if (tabs[0]?.id) {
-          if (callback) {
-            chrome.tabs.sendMessage(tabs[0].id, message, callback);
-          } else {
-            chrome.tabs.sendMessage(tabs[0].id, message);
+  const sendMessageToContentScript = useCallback(
+    (message: ScrollMessage, callback?: (response: ScrollResponse) => void) => {
+      chrome.tabs.query(
+        { active: true, currentWindow: true },
+        (tabs: chrome.tabs.Tab[]) => {
+          if (tabs[0]?.id) {
+            if (callback) {
+              chrome.tabs.sendMessage(tabs[0].id, message, callback);
+            } else {
+              chrome.tabs.sendMessage(tabs[0].id, message);
+            }
           }
-        }
-      },
-    );
-  };
+        },
+      );
+    },
+    [],
+  );
 
   // Get current status when popup opens
   useEffect(() => {
     sendMessageToContentScript({ type: "GET_STATUS" }, (response) => {
       if (response) {
-        setIsScrolling(response.isScrolling);
-        setScrollDirection(response.direction);
-        setSpeed(response.speed);
-        setCurrentSpeedName(response.speedName);
+        setIsScrolling(response.isScrolling || false);
+        setScrollDirection(response.direction || null);
+        setSpeed(response.speed || 2);
+        setCurrentSpeedName(response.speedName || "Moderate");
       }
     });
-  }, []);
+  }, [sendMessageToContentScript]);
 
   const handleScrollUp = () => {
     sendMessageToContentScript({ type: "START_SCROLL_UP" }, (response) => {
@@ -83,7 +98,7 @@ function App() {
   };
 
   const handleSpeedChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const newSpeed = parseInt(event.target.value);
+    const newSpeed = Number.parseInt(event.target.value, 10);
     setSpeed(newSpeed);
     const speedName = SPEED_PRESETS[newSpeed].name;
     setCurrentSpeedName(speedName);

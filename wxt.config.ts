@@ -8,7 +8,7 @@ export default defineConfig({
       chrome:
         "/Users/hlaadhar/.local/bin/chrome/mac_arm-136.0.7103.113/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing", // Use Chrome Beta instead of regular Chrome
     },
-    startUrls: ["https://www.voici.fr/"],
+    startUrls: ["https://www.public.fr/"],
   },
   manifest: {
     name: "SuperScroll",
@@ -18,9 +18,6 @@ export default defineConfig({
     permissions: ["storage", "activeTab", "scripting"],
     host_permissions: ["<all_urls>"],
     icons: {
-      "16": "icon/16.png",
-      "32": "icon/32.png",
-      "48": "icon/48.png",
       "128": "icon/128.png",
     },
   },

@@ -34,7 +34,7 @@ export default defineContentScript({
       const currentSpeed = SPEED_PRESETS[scrollSpeed];
 
       // Calculate pixels to scroll based on time elapsed
-      let pixelsToScroll = (currentSpeed.pixelsPerSecond * deltaTime) / 1000;
+      const pixelsToScroll = (currentSpeed.pixelsPerSecond * deltaTime) / 1000;
 
       // For ultra-high speeds, use direct DOM manipulation to bypass browser throttling
       if (currentSpeed.pixelsPerSecond > 1500) {
@@ -144,11 +144,11 @@ export default defineContentScript({
     }
 
     // Add event listeners for auto-pause
-    ["wheel", "touchstart", "keydown", "mousedown"].forEach((event) => {
+    for (const event of ["wheel", "touchstart", "keydown", "mousedown"]) {
       document.addEventListener(event, handleUserInteraction, {
         passive: true,
       });
-    });
+    }
 
     // Keyboard shortcuts
     document.addEventListener("keydown", (e) => {
