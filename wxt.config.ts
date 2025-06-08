@@ -15,7 +15,7 @@ export default defineConfig({
     version: "0.1.0",
     description:
       "An advanced auto-scroll Chrome extension with customizable features.",
-    permissions: ["storage", "activeTab", "scripting"],
+    permissions: ["activeTab"],
     host_permissions: ["<all_urls>"],
     icons: {
       "128": "icon/128.png",
