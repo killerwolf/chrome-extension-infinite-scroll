@@ -12,7 +12,7 @@ export default defineConfig({
   },
   manifest: {
     name: "SuperScroll",
-    version: "0.1.1",
+    version: "1.0.1",
     description:
       "An advanced auto-scroll Chrome extension with customizable features.",
     permissions: ["activeTab", "scripting"],
