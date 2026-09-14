@@ -45,6 +45,10 @@ function isRestrictedUrl(url?: string) {
   );
 }
 
+// Read once at module load rather than hardcoding it — a hardcoded string drifts
+// out of sync with the manifest the moment either one is bumped alone.
+const EXTENSION_VERSION = chrome.runtime.getManifest().version;
+
 function App() {
   const [speed, setSpeed] = useState(2); // Default to Moderate
   const [isScrolling, setIsScrolling] = useState(false);
@@ -270,7 +274,7 @@ function App() {
       )}
 
       <footer className="text-center text-xs text-muted-foreground">
-        <p>SuperScroll v0.1.0</p>
+        <p>SuperScroll v{EXTENSION_VERSION}</p>
         <p className="mt-1">Auto-pauses on interaction</p>
       </footer>
     </div>

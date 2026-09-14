@@ -1,8 +1,33 @@
 {
-  "name": "wxt-react-starter",
-  "description": "manifest.json description",
+  "name": "superscroll",
+  "description": "An advanced auto-scroll Chrome extension with customizable features.",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.1",
+  "license": "MIT",
+  "author": "Hamdi LAADHARI",
+  "homepage": "https://github.com/killerwolf/chrome-extension-infinite-scroll",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/killerwolf/chrome-extension-infinite-scroll.git"
+  },
+  "bugs": {
+    "url": "https://github.com/killerwolf/chrome-extension-infinite-scroll/issues"
+  },
+  "keywords": [
+    "chrome-extension",
+    "browser-extension",
+    "auto-scroll",
+    "autoscroll",
+    "scrolling",
+    "productivity",
+    "reading",
+    "teleprompter",
+    "accessibility",
+    "wxt"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
   "type": "module",
   "scripts": {
     "dev": "wxt",
