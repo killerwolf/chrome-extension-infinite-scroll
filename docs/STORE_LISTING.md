@@ -93,6 +93,22 @@ Reference for the "why does this extension need X" fields in the dashboard:
 - **host_permissions (`<all_urls>`)**: the content script and scroll controls
   need to run on any site the user chooses to scroll.
 
+### Scripting justification (plain text, for the dashboard field)
+
+```text
+SuperScroll uses the scripting permission to re-inject its own content script into
+the active tab when messaging fails. This happens for tabs that were already open
+before the extension was installed or updated — Chrome does not automatically
+inject content scripts into pre-existing tabs, so without this, clicking the
+extension's controls on such a tab does nothing until the user manually reloads
+the page.
+
+The permission is used narrowly: only the extension's own bundled content script
+is injected, only into the single active tab, and only in direct response to the
+user clicking a control in the popup — never automatically, in the background, or
+into arbitrary tabs.
+```
+
 ## Version history
 
 | Version | Notes |
