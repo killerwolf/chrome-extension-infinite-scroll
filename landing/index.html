@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SuperScroll — Intelligent, customizable auto-scrolling for any website</title>
+    <meta name="description" content="Intelligent, customizable auto-scrolling for any website." />
+    <link rel="canonical" href="https://killerwolf.github.io/chrome-extension-infinite-scroll/" />
+    <link rel="icon" href="icon.png" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="SuperScroll" />
+    <meta property="og:title" content="SuperScroll — Intelligent, customizable auto-scrolling for any website" />
+    <meta property="og:description" content="Intelligent, customizable auto-scrolling for any website." />
+    <meta property="og:url" content="https://killerwolf.github.io/chrome-extension-infinite-scroll/" />
+    <meta property="og:image" content="https://killerwolf.github.io/chrome-extension-infinite-scroll/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="SuperScroll — Intelligent, customizable auto-scrolling for any website" />
+    <meta name="twitter:description" content="Intelligent, customizable auto-scrolling for any website." />
+    <meta name="twitter:image" content="https://killerwolf.github.io/chrome-extension-infinite-scroll/og-image.png" />
+
+    <style>
+      /* System fonts only — no webfont fetch to race, and it matches whatever the
+         reader's OS already looks like, which reads as more "real app" than a
+         downloaded typeface does. */
+      :root {
+        --bg: #0b0c0e;
+        --bg-raised: #141517;
+        --fg: #f5f6f7;
+        --fg-dim: #a8adb4;
+        --border: #24262a;
+        --accent: #3b82f6;
+      }
+      @media (prefers-color-scheme: light) {
+        :root {
+          --bg: #ffffff;
+          --bg-raised: #f6f7f8;
+          --fg: #16181b;
+          --fg-dim: #565c66;
+          --border: #e4e6e9;
+        }
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body {
+        background: var(--bg);
+        color: var(--fg);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+        line-height: 1.5;
+      }
+      a { color: inherit; }
+      .wrap { max-width: 880px; margin: 0 auto; padding: 0 24px; }
+
+      header.site {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 28px 0;
+      }
+      .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 18px; }
+      .brand img { width: 28px; height: 28px; border-radius: 7px; }
+      .site nav { display: flex; gap: 24px; font-size: 15px; }
+      .site nav a { color: var(--fg-dim); text-decoration: none; }
+      .site nav a:hover { color: var(--fg); }
+
+      .hero { padding: 72px 0 56px; text-align: center; }
+      .hero .icon { width: 80px; height: 80px; border-radius: 18px; margin-bottom: 28px; }
+      .hero h1 {
+        font-size: clamp(32px, 5vw, 52px);
+        line-height: 1.08;
+        letter-spacing: -0.03em;
+        font-weight: 800;
+        margin-bottom: 20px;
+      }
+      .hero .tagline {
+        font-size: clamp(17px, 2.4vw, 21px);
+        color: var(--fg-dim);
+        max-width: 46ch;
+        margin: 0 auto 36px;
+      }
+      .cta-row { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 13px 26px;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 15px;
+        text-decoration: none;
+        border: 1px solid transparent;
+      }
+      .btn-primary { background: var(--accent); color: #fff; }
+      .btn-primary:hover { filter: brightness(1.08); }
+      .btn-secondary { background: transparent; color: var(--fg); border-color: var(--border); }
+      .btn-secondary:hover { border-color: var(--fg-dim); }
+
+      .features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+        padding: 56px 0;
+      }
+      .feature {
+        background: var(--bg-raised);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 24px;
+      }
+      .feature .emoji { font-size: 26px; margin-bottom: 12px; display: block; }
+      .feature h3 { font-size: 16px; margin-bottom: 8px; }
+      .feature p { font-size: 14px; color: var(--fg-dim); }
+
+      footer.site {
+        border-top: 1px solid var(--border);
+        padding: 32px 0 48px;
+        margin-top: 40px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        font-size: 14px;
+        color: var(--fg-dim);
+      }
+      footer.site a { text-decoration: none; }
+      footer.site a:hover { color: var(--fg); }
+      footer.site .links { display: flex; gap: 20px; }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header class="site">
+        <div class="brand">
+          <img src="icon.png" alt="" />
+          SuperScroll
+        </div>
+        <nav>
+          <a href="https://github.com/killerwolf/chrome-extension-infinite-scroll">GitHub</a>
+        </nav>
+      </header>
+
+      <section class="hero">
+        <img class="icon" src="icon.png" alt="" />
+        <h1>Scroll at exactly the speed you want.</h1>
+        <p class="tagline">
+          8 presets from a careful reading pace to 10,000 px/s, keyboard shortcuts,
+          and auto-pause the moment you touch the page yourself.
+        </p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="https://chromewebstore.google.com/detail/superscroll/lelhnakechcmiefkfbmkfdkpdjjeapem">Add to Chrome</a>
+          <a class="btn btn-secondary" href="https://github.com/killerwolf/chrome-extension-infinite-scroll">View on GitHub</a>
+        </div>
+      </section>
+
+      <!-- No screenshot yet — see the README/AUTHOR for one before adding a
+           shot-frame block back here; a placeholder would undercut the pitch. -->
+
+      <section class="features">
+        <div class="feature">
+          <span class="emoji">⚡</span>
+          <h3>Up to 10,000 px/s</h3>
+          <p>Eight speed presets, from a careful reading pace up to speeds that bypass normal browser scroll throttling entirely.</p>
+        </div>
+        <div class="feature">
+          <span class="emoji">⌨️</span>
+          <h3>Keyboard shortcuts</h3>
+          <p>Alt+S to toggle, Alt+↑/↓ to pick a direction, Alt+P to pause — no need to reopen the popup mid-scroll.</p>
+        </div>
+        <div class="feature">
+          <span class="emoji">🛡️</span>
+          <h3>Auto-pause</h3>
+          <p>Touch the page yourself — wheel, click, or a key — and scrolling stops immediately.</p>
+        </div>
+      </section>
+
+      <footer class="site">
+        <div>© 2026 SuperScroll</div>
+        <div class="links">
+          <a href="https://github.com/killerwolf/chrome-extension-infinite-scroll">GitHub</a>
+          <a href="https://github.com/killerwolf/chrome-extension-infinite-scroll/blob/main/LICENSE">MIT</a>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>
