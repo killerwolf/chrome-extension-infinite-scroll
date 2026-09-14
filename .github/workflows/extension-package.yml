@@ -1,0 +1,78 @@
+# Package the extension as a zip on every push, and attach it to the GitHub Release
+# when a tag is pushed.
+#
+# Two reasons this is worth having even with no store automation: people can install
+# the exact reviewed build, and every push proves the tree still builds and packages.
+#
+# SOURCE_DIR is the WXT build output, not the repo root — WXT generates
+# manifest.json at build time from wxt.config.ts, it isn't checked in.
+
+name: Package extension
+
+on:
+  push:
+    branches: [main]
+    tags: ["*"]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write # attaching the zip to the release
+
+env:
+  SOURCE_DIR: .output/chrome-mv3
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Read the manifest
+        id: manifest
+        run: |
+          MANIFEST="${SOURCE_DIR}/manifest.json"
+          test -f "$MANIFEST" || { echo "::error::No manifest.json in ${SOURCE_DIR}"; exit 1; }
+          NAME=$(jq -r '.name' "$MANIFEST" | tr -cs '[:alnum:]._-' '-' | sed 's/-*$//')
+          VERSION=$(jq -r '.version' "$MANIFEST")
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Packaging $NAME $VERSION"
+
+      # Catches manifest problems that only surface at upload time otherwise. A few
+      # warnings are Firefox-specific; the manifest validation applies to both stores.
+      - name: Lint the extension
+        continue-on-error: true
+        run: npx --yes web-ext lint --source-dir "${SOURCE_DIR}"
+
+      - name: Build the zip
+        run: |
+          cd "${SOURCE_DIR}"
+          zip -r "${GITHUB_WORKSPACE}/${{ steps.manifest.outputs.name }}-${{ steps.manifest.outputs.version }}.zip" .
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.manifest.outputs.name }}-${{ steps.manifest.outputs.version }}
+          path: "*.zip"
+
+      - name: Attach the zip to the release
+        if: github.ref_type == 'tag'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ github.ref_name }}" \
+            --title "${{ github.ref_name }}" --generate-notes --verify-tag \
+            || echo "release already exists, uploading to it"
+          gh release upload "${{ github.ref_name }}" ./*.zip --clobber
