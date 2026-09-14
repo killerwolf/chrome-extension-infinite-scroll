@@ -4,13 +4,25 @@
 
 # SuperScroll Chrome Extension
 
-SuperScroll is a modern, accessible Chrome extension that enables intelligent, customizable auto-scrolling on any website. Designed with Material Design principles, it features a clean, responsive UI, keyboard shortcuts, and full support for both light and dark modes.
+<p align="center">
+  <a href="https://chromewebstore.google.com/detail/superscroll/lelhnakechcmiefkfbmkfdkpdjjeapem"><img alt="Chrome Web Store version" src="https://img.shields.io/chrome-web-store/v/lelhnakechcmiefkfbmkfdkpdjjeapem"></a>
+  <a href="https://chromewebstore.google.com/detail/superscroll/lelhnakechcmiefkfbmkfdkpdjjeapem"><img alt="Chrome Web Store users" src="https://img.shields.io/chrome-web-store/users/lelhnakechcmiefkfbmkfdkpdjjeapem"></a>
+  <a href="https://github.com/killerwolf/chrome-extension-infinite-scroll/actions/workflows/extension-package.yml"><img alt="CI status" src="https://github.com/killerwolf/chrome-extension-infinite-scroll/actions/workflows/extension-package.yml/badge.svg"></a>
+  <a href="https://github.com/killerwolf/chrome-extension-infinite-scroll/blob/main/LICENSE"><img alt="licence" src="https://img.shields.io/github/license/killerwolf/chrome-extension-infinite-scroll"></a>
+</p>
+
+SuperScroll is a Chrome extension for intelligent, customizable auto-scrolling on any website — 8 speed presets from careful reading pace up to 10,000 px/s, keyboard shortcuts, and a clean popup UI that auto-pauses the moment you touch the page yourself.
+
+## Install
+
+[Add to Chrome](https://chromewebstore.google.com/detail/superscroll/lelhnakechcmiefkfbmkfdkpdjjeapem) from the Chrome Web Store.
+
+To run from source instead, see [Development Process](#development-process) below.
 
 ## Features
 
 - **Auto-Scroll Anywhere:** Start, stop, and control scrolling speed on any webpage.
-- **Material Design UI:** Clean, modern interface with cards, elevation, and color accents.
-- **Light & Dark Mode:** Adapts to your system theme for comfortable use day or night.
+- **Modern UI:** Clean popup with gradient controls and smooth animations.
 - **Keyboard Shortcuts:** Quickly start/stop or change direction with Alt+S, Alt+↑, Alt+↓.
 - **Accessible:** Large touch targets, high-contrast colors, and keyboard navigation.
 - **Status Feedback:** Animated indicators and status chips show current scroll state.
@@ -37,6 +49,18 @@ SuperScroll is a modern, accessible Chrome extension that enables intelligent, c
 - **Controls:** Floating action buttons for Up, Pause, Down
 - **Shortcuts:** Keyboard shortcut panel
 - **Footer:** Version and auto-pause info
+
+## Permissions
+
+| Permission | Why |
+| --- | --- |
+| `activeTab` | Lets the popup identify and message the tab you're currently viewing. |
+| `scripting` | Re-injects the content script into a tab that was already open before install or update, so the scroll controls work on the first click instead of needing a manual page reload. |
+| `host_permissions: <all_urls>` | The scroll controls need to run on whatever site you choose to scroll — SuperScroll works on any page, not a fixed list. |
+
+## Privacy
+
+SuperScroll collects nothing and sends nothing anywhere. All scrolling happens locally in your browser; there's no analytics, no network requests, and no data stored beyond the extension's own in-memory scroll state.
 
 ## Development Process
 
@@ -80,4 +104,5 @@ npm run lint
 - `.output/` — Build output for Chrome
 
 ## License
-MIT
+
+[MIT](LICENSE)
