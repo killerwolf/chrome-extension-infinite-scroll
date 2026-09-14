@@ -1,39 +1,30 @@
-# Deploy a static landing page to GitHub Pages on every push to main.
+# Publishes demo/ to GitHub Pages on every push to main that touches it.
 #
-# Uses the modern Actions-based deployment (upload-pages-artifact + deploy-pages),
-# not the legacy push-to-a-gh-pages-branch approach — no branch to keep in sync,
-# no bot commits cluttering history.
+# Mirrors killerwolf/visual-image-tool's pages.yml — same repo owner hosts several
+# project pages this way, proxied together under h4md1.fr by infrastructure outside
+# this repo. Keep the two workflows in sync if one changes.
 #
 # One step this workflow cannot do for you: on first use, go to
 # Settings > Pages > Build and deployment > Source, and set it to "GitHub Actions".
-# Until that's set, this workflow will run but the deploy step will fail.
-#
-# Set SOURCE_DIR to wherever index.html lives. If the site has its own build step
-# (a bundler, a static-site generator), add a build job before the upload step and
-# point SOURCE_DIR at its output directory instead of the source.
 
-name: Deploy landing page
+name: Deploy demo site
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
     paths:
-      - "landing/**"
+      - "demo/**"
       - ".github/workflows/gh-pages.yml"
   workflow_dispatch:
-
-# docs/ is already this repo's markdown documentation folder, so the landing page
-# lives in landing/ instead to avoid publishing CONTRIBUTING.md etc. as web pages.
-env:
-  SOURCE_DIR: landing
 
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Only one deploy in flight at a time; let an in-progress run finish rather than
-# cancelling it mid-publish.
+# The site is only ever the newest commit, so a queued run can be dropped — but
+# never one that is mid-deploy.
 concurrency:
   group: pages
   cancel-in-progress: false
@@ -45,20 +36,26 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Verify the landing page exists
+      - name: Stage the publishable demo files
         run: |
-          test -f "${SOURCE_DIR}/index.html" || {
-            echo "::error::No ${SOURCE_DIR}/index.html — nothing to deploy. Check SOURCE_DIR."
-            exit 1
-          }
+          mkdir -p _site
+          rsync -a demo/ _site/
+          # Without .nojekyll, Pages runs Jekyll and drops files starting "_".
+          touch _site/.nojekyll
+          echo "Publishing:"
+          ls -A _site
 
-      - uses: actions/configure-pages@v5
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
 
-      - uses: actions/upload-pages-artifact@v3
+      - name: Upload site
+        uses: actions/upload-pages-artifact@v3
         with:
-          path: ${{ env.SOURCE_DIR }}
+          path: _site
 
-      - id: deployment
+      - name: Deploy
+        id: deployment
         uses: actions/deploy-pages@v4
