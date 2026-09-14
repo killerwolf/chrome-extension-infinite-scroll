@@ -9,13 +9,14 @@
   <a href="https://chromewebstore.google.com/detail/superscroll/lelhnakechcmiefkfbmkfdkpdjjeapem"><img alt="Chrome Web Store users" src="https://img.shields.io/chrome-web-store/users/lelhnakechcmiefkfbmkfdkpdjjeapem"></a>
   <a href="https://github.com/killerwolf/chrome-extension-infinite-scroll/actions/workflows/extension-package.yml"><img alt="CI status" src="https://github.com/killerwolf/chrome-extension-infinite-scroll/actions/workflows/extension-package.yml/badge.svg"></a>
   <a href="https://github.com/killerwolf/chrome-extension-infinite-scroll/blob/main/LICENSE"><img alt="licence" src="https://img.shields.io/github/license/killerwolf/chrome-extension-infinite-scroll"></a>
+  <a href="https://h4md1.fr/chrome-extension-infinite-scroll/"><img alt="site" src="https://img.shields.io/website?url=https%3A%2F%2Fh4md1.fr%2Fchrome-extension-infinite-scroll%2F"></a>
 </p>
 
 SuperScroll is a Chrome extension for intelligent, customizable auto-scrolling on any website — 8 speed presets from careful reading pace up to 10,000 px/s, keyboard shortcuts, and a clean popup UI that auto-pauses the moment you touch the page yourself.
 
 ## Install
 
-[Add to Chrome](https://chromewebstore.google.com/detail/superscroll/lelhnakechcmiefkfbmkfdkpdjjeapem) from the Chrome Web Store.
+[Add to Chrome](https://chromewebstore.google.com/detail/superscroll/lelhnakechcmiefkfbmkfdkpdjjeapem) from the Chrome Web Store, or see the [project site](https://h4md1.fr/chrome-extension-infinite-scroll/).
 
 To run from source instead, see [Development Process](#development-process) below.
 
