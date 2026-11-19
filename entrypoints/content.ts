@@ -8,9 +8,8 @@ export default defineContentScript({
     let scrollSpeed = 300; // Speed in pixels per second (50-10000)
     let animationId: number | undefined;
     let lastTimestamp = 0;
-    let highSpeedIntervalId: number | undefined;
+    let subpixelRemainder = 0;
 
-    // Ultra-fast scrolling that bypasses browser limitations
     function smoothScroll(timestamp: number) {
       if (!isScrolling) return;
 
@@ -18,39 +17,17 @@ export default defineContentScript({
         lastTimestamp = timestamp;
       }
 
-      const deltaTime = timestamp - lastTimestamp;
+      const elapsed = timestamp - lastTimestamp;
+      // Long frames from tab suspension/throttling must not cause a large jump.
+      const deltaTime = Math.min(Math.max(elapsed, 0), 100);
+      subpixelRemainder += (scrollSpeed * deltaTime) / 1000;
+      const wholePixels = Math.floor(subpixelRemainder);
+      subpixelRemainder -= wholePixels;
+      const scrollAmount =
+        (scrollDirection === "down" ? 1 : -1) * wholePixels;
 
-      // Calculate pixels to scroll based on time elapsed
-      const pixelsToScroll = (scrollSpeed * deltaTime) / 1000;
-
-      // For ultra-high speeds, use direct DOM manipulation to bypass browser throttling
-      if (scrollSpeed > 1500) {
-        // Use multiple smaller scrolls per frame for ultra-fast speeds
-        const scrollsPerFrame = Math.ceil(scrollSpeed / 3000);
-        const pixelsPerScroll = pixelsToScroll / scrollsPerFrame;
-
-        for (let i = 0; i < scrollsPerFrame; i++) {
-          const scrollAmount =
-            scrollDirection === "down" ? pixelsPerScroll : -pixelsPerScroll;
-
-          // Direct DOM manipulation for maximum speed
-          if (scrollSpeed > 5000) {
-            // Bypass smooth scrolling entirely for insane speeds
-            document.documentElement.scrollTop += scrollAmount;
-            document.body.scrollTop += scrollAmount; // Fallback for older browsers
-          } else {
-            // Use instant scrollBy for ultra-fast speeds
-            window.scrollBy(0, scrollAmount);
-          }
-        }
-      } else {
-        // Normal scrolling for moderate speeds
-        const scrollAmount =
-          scrollDirection === "down" ? pixelsToScroll : -pixelsToScroll;
-        window.scrollBy({
-          top: scrollAmount,
-          behavior: scrollSpeed > 300 ? "auto" : "smooth",
-        });
+      if (scrollAmount !== 0) {
+        window.scrollBy({ top: scrollAmount, behavior: "auto" });
       }
 
       lastTimestamp = timestamp;
@@ -67,27 +44,8 @@ export default defineContentScript({
       isScrolling = true;
       scrollDirection = direction;
       lastTimestamp = 0;
-
-      // For insane speeds (>8000 px/s), use high-frequency interval instead of RAF
-      if (scrollSpeed > 8000) {
-        const pixelsPerInterval = scrollSpeed / 100; // 100 intervals per second
-        highSpeedIntervalId = window.setInterval(() => {
-          if (!isScrolling) return;
-
-          const scrollAmount =
-            scrollDirection === "down" ? pixelsPerInterval : -pixelsPerInterval;
-
-          // Direct DOM manipulation for maximum performance
-          document.documentElement.scrollTop += scrollAmount;
-          document.body.scrollTop += scrollAmount;
-
-          // Also trigger window scroll for compatibility
-          window.scrollBy(0, scrollAmount);
-        }, 10); // 10ms = 100fps
-      } else {
-        // Use RAF for normal and fast speeds
-        animationId = requestAnimationFrame(smoothScroll);
-      }
+      subpixelRemainder = 0;
+      animationId = requestAnimationFrame(smoothScroll);
 
       console.log(
         `Started scrolling ${direction} at ${scrollSpeed} px/s`,
@@ -103,13 +61,8 @@ export default defineContentScript({
         animationId = undefined;
       }
 
-      // Clear high-speed interval
-      if (highSpeedIntervalId) {
-        clearInterval(highSpeedIntervalId);
-        highSpeedIntervalId = undefined;
-      }
-
       lastTimestamp = 0;
+      subpixelRemainder = 0;
       console.log("Scrolling stopped");
     }
 
@@ -134,6 +87,13 @@ export default defineContentScript({
         passive: true,
       });
     }
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden && isScrolling) {
+        stopScrolling();
+        console.log("Auto-paused while page was hidden");
+      }
+    });
 
     // Keyboard shortcuts
     document.addEventListener("keydown", (e) => {
