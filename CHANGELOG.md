@@ -5,7 +5,14 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [1.1.0] - 2026-11-19
+
+### Changed
+
+- Replaced 8-speed preset dropdown with custom speed slider (50-10,000 px/s, step 50) using shadcn/ui Slider
+  - Speed value displayed directly (e.g., "1200 px/s")
+  - Direct pixel values sent from popup to content script instead of preset indices
+  - Default speed changed from 300 px/s preset to 300 px/s value
 
 ## [1.0.1] - 2026-09-14
 
