@@ -2,18 +2,14 @@ import type React from "react";
 import { useState, useEffect, useCallback } from "react";
 import { Button } from "~/components/ui/button";
 import { Label } from "~/components/ui/label";
+import { Slider } from "~/components/ui/slider";
 import { ChevronUp, ChevronDown, Pause } from "lucide-react";
 
-const SPEED_PRESETS = [
-  { name: "Very Slow", value: 0, description: "50 px/s" },
-  { name: "Slow", value: 1, description: "150 px/s" },
-  { name: "Moderate", value: 2, description: "300 px/s" },
-  { name: "Fast", value: 3, description: "600 px/s" },
-  { name: "Very Fast", value: 4, description: "1200 px/s" },
-  { name: "Ultra Fast", value: 5, description: "2500 px/s" },
-  { name: "Ludicrous", value: 6, description: "5000 px/s" },
-  { name: "Insane", value: 7, description: "10000 px/s" },
-];
+// Custom speed range: 50-10,000 px/s, default 300 px/s
+const MIN_SPEED = 50;
+const MAX_SPEED = 10000;
+const DEFAULT_SPEED = 300;
+const SPEED_STEP = 50;
 
 // Define proper types for message communication
 interface ScrollMessage {
@@ -50,12 +46,11 @@ function isRestrictedUrl(url?: string) {
 const EXTENSION_VERSION = chrome.runtime.getManifest().version;
 
 function App() {
-  const [speed, setSpeed] = useState(2); // Default to Moderate
+  const [speed, setSpeed] = useState(DEFAULT_SPEED); // Default to 300 px/s
   const [isScrolling, setIsScrolling] = useState(false);
   const [scrollDirection, setScrollDirection] = useState<"up" | "down" | null>(
     null,
   );
-  const [currentSpeedName, setCurrentSpeedName] = useState("Moderate");
   const [unsupportedPage, setUnsupportedPage] = useState(false);
 
   const sendMessageToContentScript = useCallback(
@@ -110,8 +105,7 @@ function App() {
       if (response) {
         setIsScrolling(response.isScrolling || false);
         setScrollDirection(response.direction || null);
-        setSpeed(response.speed || 2);
-        setCurrentSpeedName(response.speedName || "Moderate");
+        setSpeed(response.speed || DEFAULT_SPEED);
       }
     });
   }, [sendMessageToContentScript]);
@@ -146,17 +140,15 @@ function App() {
     });
   };
 
-  const handleSpeedChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const newSpeed = Number.parseInt(event.target.value, 10);
+  const handleSpeedChange = (value: number[]) => {
+    const newSpeed = value[0];
     setSpeed(newSpeed);
-    const speedName = SPEED_PRESETS[newSpeed].name;
-    setCurrentSpeedName(speedName);
 
     sendMessageToContentScript(
       { type: "SET_SPEED", speed: newSpeed },
       (response) => {
         if (response?.status === "speed_updated") {
-          console.log(`Speed updated to: ${response.speedName}`);
+          console.log(`Speed updated to: ${response.speed} px/s`);
         }
       },
     );
@@ -177,19 +169,21 @@ function App() {
         <main className="space-y-4">
           {/* Speed Selection */}
           <div className="space-y-2">
-            <Label className="text-sm font-medium">Speed</Label>
-            <select
-              value={speed}
-              onChange={handleSpeedChange}
+            <div className="flex items-center justify-between">
+              <Label className="text-sm font-medium">Speed</Label>
+              <span className="text-sm font-medium text-primary">
+                {speed} px/s
+              </span>
+            </div>
+            <Slider
+              value={[speed]}
+              min={MIN_SPEED}
+              max={MAX_SPEED}
+              step={SPEED_STEP}
+              onValueChange={handleSpeedChange}
               disabled={isScrolling}
-              className="w-full p-2 rounded-md border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {SPEED_PRESETS.map((preset) => (
-                <option key={preset.value} value={preset.value}>
-                  {preset.name} ({preset.description})
-                </option>
-              ))}
-            </select>
+              className="py-2"
+            />
           </div>
 
           {/* Control Buttons */}
@@ -263,7 +257,7 @@ function App() {
                   ) : (
                     <ChevronDown className="h-3 w-3" />
                   )}
-                  Active - {currentSpeedName}
+                  Active - {speed} px/s
                 </>
               ) : (
                 "Ready"

@@ -5,22 +5,10 @@ export default defineContentScript({
 
     let isScrolling = false;
     let scrollDirection: "up" | "down" = "down";
-    let scrollSpeed = 2; // Speed preset index (0-7)
+    let scrollSpeed = 300; // Speed in pixels per second (50-10000)
     let animationId: number | undefined;
     let lastTimestamp = 0;
     let highSpeedIntervalId: number | undefined;
-
-    // Enhanced speed presets: much faster options for power users
-    const SPEED_PRESETS = [
-      { name: "Very Slow", pixelsPerSecond: 50 },
-      { name: "Slow", pixelsPerSecond: 150 },
-      { name: "Moderate", pixelsPerSecond: 300 },
-      { name: "Fast", pixelsPerSecond: 600 },
-      { name: "Very Fast", pixelsPerSecond: 1200 },
-      { name: "Ultra Fast", pixelsPerSecond: 2500 },
-      { name: "Ludicrous", pixelsPerSecond: 5000 },
-      { name: "Insane", pixelsPerSecond: 10000 },
-    ];
 
     // Ultra-fast scrolling that bypasses browser limitations
     function smoothScroll(timestamp: number) {
@@ -31,15 +19,14 @@ export default defineContentScript({
       }
 
       const deltaTime = timestamp - lastTimestamp;
-      const currentSpeed = SPEED_PRESETS[scrollSpeed];
 
       // Calculate pixels to scroll based on time elapsed
-      const pixelsToScroll = (currentSpeed.pixelsPerSecond * deltaTime) / 1000;
+      const pixelsToScroll = (scrollSpeed * deltaTime) / 1000;
 
       // For ultra-high speeds, use direct DOM manipulation to bypass browser throttling
-      if (currentSpeed.pixelsPerSecond > 1500) {
+      if (scrollSpeed > 1500) {
         // Use multiple smaller scrolls per frame for ultra-fast speeds
-        const scrollsPerFrame = Math.ceil(currentSpeed.pixelsPerSecond / 3000);
+        const scrollsPerFrame = Math.ceil(scrollSpeed / 3000);
         const pixelsPerScroll = pixelsToScroll / scrollsPerFrame;
 
         for (let i = 0; i < scrollsPerFrame; i++) {
@@ -47,7 +34,7 @@ export default defineContentScript({
             scrollDirection === "down" ? pixelsPerScroll : -pixelsPerScroll;
 
           // Direct DOM manipulation for maximum speed
-          if (currentSpeed.pixelsPerSecond > 5000) {
+          if (scrollSpeed > 5000) {
             // Bypass smooth scrolling entirely for insane speeds
             document.documentElement.scrollTop += scrollAmount;
             document.body.scrollTop += scrollAmount; // Fallback for older browsers
@@ -62,7 +49,7 @@ export default defineContentScript({
           scrollDirection === "down" ? pixelsToScroll : -pixelsToScroll;
         window.scrollBy({
           top: scrollAmount,
-          behavior: currentSpeed.pixelsPerSecond > 300 ? "auto" : "smooth",
+          behavior: scrollSpeed > 300 ? "auto" : "smooth",
         });
       }
 
@@ -81,11 +68,9 @@ export default defineContentScript({
       scrollDirection = direction;
       lastTimestamp = 0;
 
-      const currentSpeed = SPEED_PRESETS[scrollSpeed];
-
       // For insane speeds (>8000 px/s), use high-frequency interval instead of RAF
-      if (currentSpeed.pixelsPerSecond > 8000) {
-        const pixelsPerInterval = currentSpeed.pixelsPerSecond / 100; // 100 intervals per second
+      if (scrollSpeed > 8000) {
+        const pixelsPerInterval = scrollSpeed / 100; // 100 intervals per second
         highSpeedIntervalId = window.setInterval(() => {
           if (!isScrolling) return;
 
@@ -105,7 +90,7 @@ export default defineContentScript({
       }
 
       console.log(
-        `Started scrolling ${direction} at ${SPEED_PRESETS[scrollSpeed].name} speed`,
+        `Started scrolling ${direction} at ${scrollSpeed} px/s`,
       );
     }
 
@@ -129,10 +114,10 @@ export default defineContentScript({
     }
 
     function setSpeed(newSpeed: number) {
-      if (newSpeed >= 0 && newSpeed < SPEED_PRESETS.length) {
-        scrollSpeed = newSpeed;
-        console.log(`Speed set to: ${SPEED_PRESETS[scrollSpeed].name}`);
-      }
+      // Clamp to valid range (50-10000 px/s)
+      const clampedSpeed = Math.max(50, Math.min(10000, newSpeed));
+      scrollSpeed = clampedSpeed;
+      console.log(`Speed set to: ${scrollSpeed} px/s`);
     }
 
     // Auto-pause on user interaction
@@ -187,7 +172,7 @@ export default defineContentScript({
           startScrolling("up");
           sendResponse({
             status: "scrolling_up",
-            speed: SPEED_PRESETS[scrollSpeed].name,
+            speed: scrollSpeed,
             direction: "up",
           });
           break;
@@ -196,7 +181,7 @@ export default defineContentScript({
           startScrolling("down");
           sendResponse({
             status: "scrolling_down",
-            speed: SPEED_PRESETS[scrollSpeed].name,
+            speed: scrollSpeed,
             direction: "down",
           });
           break;
@@ -205,7 +190,7 @@ export default defineContentScript({
           stopScrolling();
           sendResponse({
             status: "stopped",
-            speed: SPEED_PRESETS[scrollSpeed].name,
+            speed: scrollSpeed,
           });
           break;
 
@@ -213,7 +198,6 @@ export default defineContentScript({
           setSpeed(message.speed);
           sendResponse({
             status: "speed_updated",
-            speedName: SPEED_PRESETS[scrollSpeed].name,
             speed: scrollSpeed,
           });
           break;
@@ -223,7 +207,6 @@ export default defineContentScript({
             isScrolling,
             direction: scrollDirection,
             speed: scrollSpeed,
-            speedName: SPEED_PRESETS[scrollSpeed].name,
           });
           break;
 
