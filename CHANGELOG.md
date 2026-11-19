@@ -5,6 +5,14 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.1.1] - 2026-11-19
+
+### Changed
+
+- Updated compatible npm dependencies and refreshed the package lockfile.
+- Improved the production dependency toolchain through React 19.3, Tailwind CSS 4.3,
+  WXT 0.21, and Radix UI patch and minor updates.
+
 ## [1.1.0] - 2026-11-19
 
 ### Changed
