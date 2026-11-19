@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Updated compatible npm dependencies and refreshed the package lockfile.
 - Improved the production dependency toolchain through React 19.3, Tailwind CSS 4.3,
   WXT 0.21, and Radix UI patch and minor updates.
+- Migrated to Biome 2.6.8 and upgraded Chrome types and Lucide React.
+- Retained TypeScript 5.9.3 because TypeScript 7.0 is incompatible with the current
+  WXT/Chrome type setup.
 
 ## [1.1.0] - 2026-11-19
 

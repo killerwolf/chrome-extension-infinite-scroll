@@ -126,7 +126,7 @@ export default defineContentScript({
     });
 
     // Message handling for popup communication
-    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       switch (message.type) {
         case "START_SCROLL_UP":
           startScrolling("up");
