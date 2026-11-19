@@ -142,6 +142,7 @@ function App() {
 
   const handleSpeedChange = (value: number[]) => {
     const newSpeed = value[0];
+    if (newSpeed === undefined) return;
     setSpeed(newSpeed);
 
     sendMessageToContentScript(
