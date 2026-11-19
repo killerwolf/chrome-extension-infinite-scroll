@@ -162,7 +162,11 @@ function App() {
       </header>
 
       {unsupportedPage ? (
-        <div className="rounded-md border border-input bg-muted/50 p-4 text-center text-sm text-muted-foreground">
+        <div
+          role="alert"
+          aria-live="assertive"
+          className="rounded-md border border-input bg-muted/50 p-4 text-center text-sm text-muted-foreground"
+        >
           SuperScroll can't run on this page. Try a regular webpage, or reload
           the tab if you just installed/updated the extension.
         </div>
@@ -177,6 +181,7 @@ function App() {
               </span>
             </div>
             <Slider
+              aria-label="Scroll speed"
               value={[speed]}
               min={MIN_SPEED}
               max={MAX_SPEED}
@@ -194,6 +199,8 @@ function App() {
               {/* Scroll Up Button */}
               <Button
                 onClick={handleScrollUp}
+                aria-label="Scroll up"
+                aria-pressed={scrollDirection === "up"}
                 size="lg"
                 className={`h-16 flex items-center justify-center transition-all duration-200 rounded-xl ${
                   scrollDirection === "up"
@@ -203,6 +210,7 @@ function App() {
                 title="Scroll Up"
               >
                 <ChevronUp
+                  aria-hidden="true"
                   className={`${scrollDirection === "up" ? "h-8 w-8" : "h-7 w-7"} transition-all duration-200`}
                 />
               </Button>
@@ -210,6 +218,7 @@ function App() {
               {/* Pause Button */}
               <Button
                 onClick={handlePause}
+                aria-label={isScrolling ? "Pause scrolling" : "Scrolling paused"}
                 disabled={!isScrolling}
                 size="lg"
                 className={`h-16 flex items-center justify-center transition-all duration-200 rounded-xl ${
@@ -219,12 +228,17 @@ function App() {
                 }`}
                 title={isScrolling ? "Click to Pause" : "Not Scrolling"}
               >
-                <Pause className="h-7 w-7 transition-all duration-200" />
+                <Pause
+                  aria-hidden="true"
+                  className="h-7 w-7 transition-all duration-200"
+                />
               </Button>
 
               {/* Scroll Down Button */}
               <Button
                 onClick={handleScrollDown}
+                aria-label="Scroll down"
+                aria-pressed={scrollDirection === "down"}
                 size="lg"
                 className={`h-16 flex items-center justify-center transition-all duration-200 rounded-xl ${
                   scrollDirection === "down"
@@ -234,6 +248,7 @@ function App() {
                 title="Scroll Down"
               >
                 <ChevronDown
+                  aria-hidden="true"
                   className={`${scrollDirection === "down" ? "h-8 w-8" : "h-7 w-7"} transition-all duration-200`}
                 />
               </Button>
@@ -241,7 +256,11 @@ function App() {
           </div>
 
           {/* Status Indicator */}
-          <div className="text-center">
+          <output
+            className="text-center"
+            aria-live="polite"
+            aria-atomic="true"
+          >
             <div
               className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium ${
                 isScrolling
@@ -254,17 +273,17 @@ function App() {
               {isScrolling ? (
                 <>
                   {scrollDirection === "up" ? (
-                    <ChevronUp className="h-3 w-3" />
+                    <ChevronUp aria-hidden="true" className="h-3 w-3" />
                   ) : (
-                    <ChevronDown className="h-3 w-3" />
+                    <ChevronDown aria-hidden="true" className="h-3 w-3" />
                   )}
-                  Active - {speed} px/s
+                  Scrolling {scrollDirection} at {speed} px/s
                 </>
               ) : (
                 "Ready"
               )}
             </div>
-          </div>
+          </output>
         </main>
       )}
 

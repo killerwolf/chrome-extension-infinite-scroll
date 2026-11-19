@@ -57,4 +57,10 @@
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
   }
+
+  button:focus-visible,
+  [role="slider"]:focus-visible {
+    outline: 3px solid hsl(var(--ring));
+    outline-offset: 3px;
+  }
 }
