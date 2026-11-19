@@ -2,11 +2,14 @@ import { defineConfig } from "wxt";
 
 // See https://wxt.dev/api/config.html
 export default defineConfig({
+  dev: {
+    reloadCommand: false,
+  },
   webExt: {
     chromiumArgs: ["--user-data-dir=./.wxt/chrome-data"],
     binaries: {
       chrome:
-        "/Users/hlaadhar/.local/bin/chrome/mac_arm-136.0.7103.113/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing", // Use Chrome Beta instead of regular Chrome
+        "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
     },
     startUrls: ["https://www.public.fr/"],
   },
